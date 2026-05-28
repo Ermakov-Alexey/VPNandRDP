@@ -38,7 +38,7 @@ namespace VaR
         private readonly Config _cfg;
         private FormWindowState _formState;
         private readonly List<VaRRdpProtocol> _protocols;
-        private List<Form> FullForms;
+        private List<Form> _fullForms;
 
         public ConnectionForm(Contact contact)
         {
@@ -125,14 +125,10 @@ namespace VaR
         {
             Logs.Trace(GetType(), MethodBase.GetCurrentMethod(),
                 $"FormClosing: _vpnUsed={_vpnUsed}, e.Cancel={e.Cancel}, Thread={Thread.CurrentThread.ManagedThreadId}");
-
-
             if (_vpnUsed)
             {
-                // Отменяем закрытие, пока не отключимся
                 e.Cancel = true;
 
-                // Блокируем интерфейс
                 this.Enabled = false;
 
                 try
@@ -148,17 +144,14 @@ namespace VaR
                     Logs.Fatal(GetType(), MethodBase.GetCurrentMethod(), "Error", ex);
                 } finally
                 {
-                    // После отключения разрешаем закрытие
                     Logs.Trace(GetType(), MethodBase.GetCurrentMethod(), "VPN disconnected, allowing close");
-                    this.FormClosing -= ConnectionForm_FormClosing; // Убираем подписку, чтобы не зациклиться
-                    this.Close(); // Повторно вызываем Close()
+                    this.FormClosing -= ConnectionForm_FormClosing;
+                    this.Close(); 
                 }
             }
             else
             {
-                // Если VPN не использовался, просто разрешаем закрытие
                 Logs.Trace(GetType(), MethodBase.GetCurrentMethod(), "VPN not used, allowing close");
-                // Ничего не делаем - форма закроется сама
             }
 
             Logs.Trace(GetType(), MethodBase.GetCurrentMethod(), "FormClosing ending");
@@ -241,9 +234,9 @@ namespace VaR
         }
         private void FullScreenConnection(ConnectRdp con, VaRRdpProtocol pr = null)
         {
-            FullForms ??= new List<Form>();
+            _fullForms ??= new List<Form>();
             FullScreenForm fsf = new FullScreenForm(con, MultiMonToolStripMenuItem.Checked, Screen.FromControl(this), pr);
-            FullForms.Add(fsf);
+            _fullForms.Add(fsf);
             if (pr != null)
                 _protocols.Remove(pr);
             fsf.FormClosing += FSF_FormClosing;
@@ -284,8 +277,8 @@ namespace VaR
                 SetIsConnected(fsf.Connect.IsConnected);
                 ReloadDataSet();
             }
-            if (FullForms.Contains(fsf))
-                FullForms.Remove(fsf);
+            if (_fullForms.Contains(fsf))
+                _fullForms.Remove(fsf);
         }
 
         private void FSF_FormClosed(object sender, FormClosedEventArgs e)
@@ -295,9 +288,8 @@ namespace VaR
             {
                 if (!xtraTabControl1.TabPages.Any())
                 {
-                    if (FullForms == null || !FullForms.Any())
+                    if (_fullForms == null || !_fullForms.Any())
                     {
-                        // Безопасное закрытие
                         this.BeginInvoke(new Action(Close));
                     }
                 }
@@ -367,11 +359,11 @@ namespace VaR
                 SetIsConnected(false);
                 if (CloseToDisconectedToolStripMenuItem.Checked)
                 {
-                    if (!xtraTabControl1.TabPages.Any() && (FullForms == null || !FullForms.Any()))
+                    if (!xtraTabControl1.TabPages.Any() && (_fullForms == null || !_fullForms.Any()))
                     {
                         this.BeginInvoke(new Action(() =>
                         {
-                            if (!xtraTabControl1.TabPages.Any() && (FullForms == null || !FullForms.Any()))
+                            if (!xtraTabControl1.TabPages.Any() && (_fullForms == null || !_fullForms.Any()))
                             {
                                 this.Close();
                             }
