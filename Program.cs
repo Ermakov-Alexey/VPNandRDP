@@ -118,17 +118,18 @@ namespace VaR
             var apiKey = Constants.VaRKey;
 
             Servers = new Servers();
-            Servers.Add(new Server("Соединение 1", "hd.pizza-sicilia.ru", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
+            //Servers.Add(new Server("hd.pizza-sicilia.ru WireGuard", "hd.pizza-sicilia.ru", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
+            //Servers.Add(new Server("192.168.1.1 WireGuard", "192.168.1.1", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
             //TODO это надо проверить дома
-            //Servers.Add(new Server("Соединение 1", "80.80.113.70", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 2", "hd.pizza-sicilia.ru", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 3", "194.226.129.132", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 4", "80.80.113.70", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 5", "194.226.129.132", 25001) { ApiUrl = apiUrl, ApiKey = apiKey });
-            //Servers.Add(new Server("Соединение 6", "194.226.129.132", 25001, VPNType.PPTP) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 7", "80.80.113.70", 25001) { ApiUrl = apiUrl, ApiKey = apiKey });
-            //Servers.Add(new Server("Соединение 8", "80.80.113.70", 25001, VPNType.PPTP) { ApiUrl = apiUrl, ApiKey = apiKey });
-            Servers.Add(new Server("Соединение 9", "213.226.124.125", 25002) { ApiUrl = apiUrl, ApiKey = apiKey });
+            //Servers.Add(new Server("80.80.113.70 WireGuard", "80.80.113.70", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("hd.pizza-sicilia.ru OpenVPN", "hd.pizza-sicilia.ru", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("194.226.129.132 OpenVPN", "194.226.129.132", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("80.80.113.70 OpenVPN", "80.80.113.70", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("194.226.129.132 L2TP", "194.226.129.132", 25001) { ApiUrl = apiUrl, ApiKey = apiKey });
+            //Servers.Add(new Server("194.226.129.132 PPTP", "194.226.129.132", 25001, VPNType.PPTP) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("80.80.113.70 L2TP", "80.80.113.70", 25001) { ApiUrl = apiUrl, ApiKey = apiKey });
+            //Servers.Add(new Server("80.80.113.70 PPTP", "80.80.113.70", 25001, VPNType.PPTP) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("213.226.124.125 L2TP", "213.226.124.125", 25002) { ApiUrl = apiUrl, ApiKey = apiKey });
 
         }
     }

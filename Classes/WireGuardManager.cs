@@ -76,9 +76,18 @@ public class WireGuardManager
             var config = await GenerateNewConfig();
             File.WriteAllText(ConfigFile, config);
             Tunnel.Service.Add(ConfigFile, true);
-            Logs.Trace(GetType(), MethodBase.GetCurrentMethod(), "WireGuard connect");
+
+            //НОВОЕ: Ждём подтверждения рукопожатия
+            if (!WaitForHandshake(30))
+            {
+                throw new Exception("WireGuard: служба запущена, но рукопожатие не прошло. Отключаем.");
+                //Logs.Warn(GetType(), MethodBase.GetCurrentMethod(),"WireGuard: служба запущена, но рукопожатие не прошло. Отключаем.");
+            }
+
+            Logs.Trace(GetType(), MethodBase.GetCurrentMethod(), "WireGuard connect and check");
 
             _connected = true;
+            return true;
         } catch (Exception ex)
         {
             Logs.Error(GetType(), MethodBase.GetCurrentMethod(), "Error Create WireGuard", ex);
@@ -93,8 +102,54 @@ public class WireGuardManager
                 Logs.Error(GetType(), MethodBase.GetCurrentMethod(), "Error", ex1);
             }
             _connected = false;
+            return false;
         }
-        return _connected;
+    }
+    /// <summary>
+    /// Ждёт успешного рукопожатия WireGuard с сервером.
+    /// Возвращает true, если рукопожатие прошло за отведённое время.
+    /// </summary>
+    public bool WaitForHandshake(int timeoutSeconds = 30)
+    {
+        var startTime = DateTime.UtcNow;
+
+        while ((DateTime.UtcNow - startTime).TotalSeconds < timeoutSeconds)
+        {
+            try
+            {
+                // Адаптер может быть ещё не готов сразу после Tunnel.Service.Add
+                var adapter = Tunnel.Service.GetAdapter(ConfigFile);
+                var config = adapter.GetConfiguration();
+
+                foreach (var peer in config.Peers)
+                {
+                    // Если рукопожатие было — проверяем, насколько оно свежее
+                    if (peer.LastHandshake != DateTime.MinValue)
+                    {
+                        var timeSinceHandshake = DateTime.UtcNow - peer.LastHandshake;
+
+                        // Если рукопожатие было не более 2 минут назад — туннель жив
+                        if (timeSinceHandshake.TotalSeconds < 120)
+                        {
+                            Logs.Trace(GetType(), MethodBase.GetCurrentMethod(),
+                                $"WireGuard handshake verified! LastHandshake: {peer.LastHandshake:HH:mm:ss}");
+                            return true;
+                        }
+                    }
+                }
+            } catch (Exception ex)
+            {
+                // Адаптер ещё не инициализирован или временно недоступен — пробуем снова
+                Logs.Trace(GetType(), MethodBase.GetCurrentMethod(),
+                    $"Ожидание адаптера... ({ex.Message})");
+            }
+
+            Thread.Sleep(500); // Пауза перед следующей попыткой
+        }
+
+        Logs.Warn(GetType(), MethodBase.GetCurrentMethod(),
+            $"Таймаут ожидания рукопожатия WireGuard ({timeoutSeconds} сек)");
+        return false;
     }
     private void Application_ApplicationExit(object sender, EventArgs e)
     {
