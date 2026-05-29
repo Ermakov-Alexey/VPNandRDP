@@ -897,7 +897,7 @@ WHERE (TerminalAccess.ContactID = @id) order by TerminalServer.NAME", list);
             do
             {
                 Server server = Program.Servers.CurrentServer;
-                progress.Report($"Пробуем подключиться через {server.Name}");
+                progress.Report($"Пробуем подключиться удаленно|Используем {server.Name}");
                 if (await VpnCreateAndConnect(_contact, server))
                 {
                     _vpnUsed = true;

@@ -9,8 +9,9 @@ namespace VaR
 {
     public partial class JoinForm : XtraForm
     {
-        private readonly Func<IProgress<string>, CancellationToken, Task> _operation; 
-        private string _progress = string.Empty; // Текущее значение прогресса
+        private readonly Func<IProgress<string>, CancellationToken, Task> _operation;
+        private string _caption = string.Empty; // Текущее значение прогресса
+        private string _description = string.Empty;
         private CancellationTokenSource _cts;  // Объект для создания токена отмены
         private readonly SimpleButton _cancelButton;  // Кнопка "Отмена" или "Закрыть"
         public JoinForm(Func<IProgress<string>, CancellationToken, Task> operation)
@@ -42,8 +43,11 @@ namespace VaR
                 progressPanel1.Description = string.Empty;
                 var progress = new Progress<string>(value =>  // Создаем объект для отслеживания прогресса
                 {
-                    _progress = value;
-                    progressPanel1.Caption = _progress;
+                    var split = value.Split(['|'], StringSplitOptions.RemoveEmptyEntries);
+                    _caption = split[0];
+                    _description = split.Length > 1 ? split[1] : string.Empty;
+                    progressPanel1.Caption = _caption;
+                    progressPanel1.Description = _description;
 
                 });
                 _cts = new CancellationTokenSource(); // Создаем CancellationTokenSource
@@ -64,8 +68,7 @@ namespace VaR
                     _cts?.Dispose(); // Освобождаем ресурсы CancellationTokenSource
                     _cts = null;
                 }
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 LogsFile.Logs.Error(GetType(), MethodBase.GetCurrentMethod(), "OnShown", ex);
             }
@@ -77,7 +80,7 @@ namespace VaR
 
             if (e.CloseReason == CloseReason.UserClosing) // Если форма закрывается пользователем
             {
-                _cts?.Cancel(); 
+                _cts?.Cancel();
             }
         }
 

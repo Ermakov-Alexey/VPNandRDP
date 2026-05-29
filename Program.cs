@@ -31,8 +31,8 @@ namespace VaR
 #if DEBUG
                 var contact = new Contact
                 {
-                    Name = "Ермаков Алексей",
-                    Email = "admin1@pizza-sicilia.ru",
+                    Name = "Иванов Иван",
+                    Email = "admin1@ps.ru",
                     //ID = 29
                     ID = 395
                 };
@@ -118,10 +118,10 @@ namespace VaR
             var apiKey = Constants.VaRKey;
 
             Servers = new Servers();
-            //Servers.Add(new Server("Соединение 1", "hd.pizza-sicilia.ru", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("Соединение 1", "hd.pizza-sicilia.ru", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
             //TODO это надо проверить дома
             //Servers.Add(new Server("Соединение 1", "80.80.113.70", 25001, VPNType.WireGuard) { ApiUrl = apiUrl, ApiKey = apiKey });
-            //Servers.Add(new Server("Соединение 2", "hd.pizza-sicilia.ru", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
+            Servers.Add(new Server("Соединение 2", "hd.pizza-sicilia.ru", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
             Servers.Add(new Server("Соединение 3", "194.226.129.132", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
             Servers.Add(new Server("Соединение 4", "80.80.113.70", 25001, VPNType.OpenVPN) { ApiUrl = apiUrl, ApiKey = apiKey });
             Servers.Add(new Server("Соединение 5", "194.226.129.132", 25001) { ApiUrl = apiUrl, ApiKey = apiKey });
