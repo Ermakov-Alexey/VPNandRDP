@@ -146,7 +146,6 @@
     <Compile Include="Classes\ListValueDto.cs" />
     <Compile Include="Classes\ModuleVersion.cs" />
     <Compile Include="Classes\ApiBridge.cs" />
-    <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\OpenVpnManagementClient.cs" />
     <Compile Include="Classes\OpenVpnManager.cs" />
     <Compile Include="Classes\RdpProtocol\ConnectionInfo.cs" />
@@ -185,6 +184,11 @@
     <Compile Include="Classes\Contact.cs" />
     <Compile Include="Classes\ConnectRdp.cs" />
     <Compile Include="Classes\ConnectRdpComparer.cs" />
+    <Compile Include="Constants.Secrets.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Constants.tt</DependentUpon>
+    </Compile>
     <Compile Include="FullScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -230,6 +234,7 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <Content Include="AppSecrets.txt" />
     <None Include="GenerateVersion.ps1" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\ConnectRDP.datasource" />
@@ -260,6 +265,10 @@
     <None Include="Resources\151.ico" />
     <Content Include="151.ico" />
     <None Include="Resources\close_32x32.png" />
+    <None Include="Constants.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Constants.Secrets.cs</LastGenOutput>
+    </None>
     <Content Include="tunnel.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -314,7 +323,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>powershell -ExecutionPolicy Bypass -File "$(ProjectDir)GenerateVersion.ps1"</PreBuildEvent>
