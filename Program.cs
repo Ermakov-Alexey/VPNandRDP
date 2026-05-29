@@ -33,8 +33,8 @@ namespace VaR
                 {
                     Name = "Иванов Иван",
                     Email = "admin1@ps.ru",
-                    //ID = 29
-                    ID = 395
+                    ID = 29
+                    //ID = 395
                 };
 #else
 

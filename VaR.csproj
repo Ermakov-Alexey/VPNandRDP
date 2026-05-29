@@ -167,6 +167,8 @@
     <Compile Include="Classes\TunnelDll\Win32.cs" />
     <Compile Include="Classes\UpdateForApp.cs" />
     <Compile Include="Classes\RdpProtocol\VaRRdpProtocol.cs" />
+    <Compile Include="Classes\UserActionLog.cs" />
+    <Compile Include="Classes\UserActionLogger.cs" />
     <Compile Include="Classes\WireGuardManager.cs" />
     <Compile Include="Classes\WireGuardPeerSetting.cs" />
     <Compile Include="ConnectInfoForm.cs">
