@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace VaR;
 
@@ -30,7 +31,29 @@ public static class IpHelper
 
         return "127.0.0.1";
     }
-
+    /// <summary>
+    /// Чтобы найти интерфейс, который прямо сейчас отправляет данные в интернет, нужно установить быстрое "ложное" соединение.
+    /// Код ниже находит правильный IP-адрес без отправки реальных пакетов в сеть.
+    /// </summary>
+    public static string GetActiveLocalIp()
+    {
+        try
+        {
+            // Используем любой внешний IP, например, DNS Google. 
+            // Реального подключения не происходит, сервер не пингуется.
+            using (var socket = new System.Net.Sockets.Socket(
+                       System.Net.Sockets.AddressFamily.InterNetwork,
+                       System.Net.Sockets.SocketType.Dgram, 0))
+            {
+                socket.Connect("8.8.8.8", 65530);
+                var endPoint = socket.LocalEndPoint as System.Net.IPEndPoint;
+                return endPoint?.Address.ToString() ?? "127.0.0.1";
+            }
+        } catch
+        {
+            return "127.0.0.1";
+        }
+    }
     public static async Task<string> GetPublicIpAsync()
     {
         // Кэшируем на 10 минут, чтобы не спамить внешний сервис
@@ -49,7 +72,7 @@ public static class IpHelper
             return GetLocalIp(); // Фоллбэк
         }
     }
-
+    //TODO надо проверить
     public static async Task<Guid?> GetClientGuidAsync()
     {
         try
