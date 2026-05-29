@@ -15,6 +15,11 @@ namespace VaR
     {
         public static Servers Servers;
         public static string AppPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IT", "VaR");
+        // Версия приложения для логов
+        public static string AppVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        // Глобальный логгер
+        public static UserActionLogger ActionLogger { get; private set; }
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
@@ -28,8 +33,20 @@ namespace VaR
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 SetServers();
+                // --- Инициализация Логгера ---
+                // Берем URL из первого сервера (или пропиши жестко)
+                string apiUrl = "http://localhost:25000";
+                if (Servers.CurrentServer != null) apiUrl = Servers.CurrentApiUrl;
+
+                ActionLogger = new UserActionLogger(apiUrl);
+                // При выходе из приложения пытаемся отправить остаток очереди
+                Application.ApplicationExit += (s, e) => { ActionLogger.FlushQueueAsync().Wait(); ActionLogger.Dispose(); };
+                // ---------------------------
+
+                Contact contact = null;
+
 #if DEBUG
-                var contact = new Contact
+                contact = new Contact
                 {
                     Name = "Иванов Иван",
                     Email = "admin1@ps.ru",
@@ -38,10 +55,11 @@ namespace VaR
                 };
 #else
 
-                var contact = LoginShow();
-                if (contact != null)
+                contact = LoginShow();
 #endif
-                Application.Run(new ConnectionForm(contact));
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (contact != null)
+                    Application.Run(new ConnectionForm(contact, ActionLogger));
             } catch (Exception ex)
             {
                 Logs.Error(typeof(Program), MethodBase.GetCurrentMethod(), "Error", ex);

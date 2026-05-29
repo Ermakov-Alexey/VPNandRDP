@@ -142,6 +142,7 @@
     <Compile Include="Classes\EzyTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Classes\IpHelper.cs" />
     <Compile Include="Classes\IpSecClient.cs" />
     <Compile Include="Classes\ListValueDto.cs" />
     <Compile Include="Classes\ModuleVersion.cs" />
